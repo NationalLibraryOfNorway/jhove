@@ -4137,14 +4137,18 @@ public class XmlHandler
         final String audioObjectID = "J4";
         final String streamIDBase = "J9";
 
-	_sampleRate = aes.getSampleRate ();
+	    _sampleRate = aes.getSampleRate ();
 
-        final String [][] attrs = {{"xmlns:aes", "http://www.aes.org/audioObject"},
- 			     {"xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"},
-                 {"ID", audioObjectID },
-			     {"analogDigitalFlag", aes.getAnalogDigitalFlag ()},
-                 {"disposition", "Validated by JHOVE"},
-                {"schemaVersion", aes.getSchemaVersion()}};
+        final String [][] attrs = {
+                {"xmlns:aes", "http://www.aes.org/audioObject"},
+ 			    {"xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"},
+                {"xsi:schemaLocation", AESAudioMetadata.NAMESPACE + " " + AESAudioMetadata.DEFAULT_LOCATION},
+                {"ID", audioObjectID },
+			    {"analogDigitalFlag", aes.getAnalogDigitalFlag ()},
+                {"disposition", "Validated by JHOVE"},
+                {"schemaVersion", aes.getSchemaVersion()}
+        };
+
         _writer.println (margin + elementStart ("aes:audioObject", attrs));
         String  s = aes.getFormat ();
         if (s != null) {

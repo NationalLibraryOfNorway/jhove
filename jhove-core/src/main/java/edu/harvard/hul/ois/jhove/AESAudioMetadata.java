@@ -20,6 +20,10 @@ public class AESAudioMetadata
      * PUBLIC CLASS FIELDS.
      ******************************************************************/
 
+    /** Namespace and version */
+    public static final String NAMESPACE = "http://www.aes.org/audioObject";
+    public static final String DEFAULT_LOCATION = "http://www.aes.org/standards/schemas/aes57-2011-08-27.xsd";
+
     /** Big-endian constant. */
     public static final int BIG_ENDIAN = 0;
 
