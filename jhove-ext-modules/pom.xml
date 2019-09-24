@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.openpreservation.jhove</groupId>
     <artifactId>jhove</artifactId>
-    <version>1.22.0</version>
+    <version>1.22.1-AESPATCHED</version>
   </parent>
 
   <artifactId>jhove-ext-modules</artifactId>
