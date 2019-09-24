@@ -15,7 +15,7 @@ import edu.harvard.hul.ois.jhove.*;
  *  method for constructing the tree.  All nodes in the tree
  *  except for the root will be plain DefaultMutablereeNodes.
  */
-public class RepTreeRoot extends DefaultMutableTreeNode 
+public class RepTreeRoot extends DefaultMutableTreeNode
 {
     /******************************************************************
      * PRIVATE INSTANCE FIELDS.
@@ -35,7 +35,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
      *               be displayed.
      *  @param app   The App object under which we're operating.
      */
-    public RepTreeRoot (RepInfo info, JhoveBase base) 
+    public RepTreeRoot (RepInfo info, JhoveBase base)
     {
         super (info.getUri());
         _info = info;
@@ -44,12 +44,12 @@ public class RepTreeRoot extends DefaultMutableTreeNode
 
         // Set the DateFormat for displaying the module date.
         _dateFmt = DateFormat.getDateInstance ();
-        
+
         // Snarf everything up into the tree.
-        
+
         snarfRepInfo ();
     }
-    
+
     /**
      *  Constructs a DefaultMutableTreeNode representing a property
      */
@@ -81,21 +81,21 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 }
                 // A scalar property of type Property -- seems 
                 // pointless, but we handle it.
-                DefaultMutableTreeNode val = 
+                DefaultMutableTreeNode val =
                         new DefaultMutableTreeNode (pProp.getName ());
                 val.add (propToNode ((Property) pValue));
                 return val;
             }
             else {
                 // Simple types: just use name plus string value.
-                DefaultMutableTreeNode val = new DefaultMutableTreeNode 
+                DefaultMutableTreeNode val = new DefaultMutableTreeNode
                         (pProp.getName () + ": " + pValue.toString ());
                 return val;
             }
         }
         // Compound properties.  The text of the node is the
         // property name.
-        DefaultMutableTreeNode val = 
+        DefaultMutableTreeNode val =
             new DefaultMutableTreeNode (pProp.getName ());
         if (arity == PropertyArity.ARRAY) {
             addArrayMembers (val, pProp);
@@ -111,21 +111,21 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         return val;
     }
-    
-    
-    
-    
+
+
+
+
     /**
      *  Find the index of an object in its parent.
      *  Understands the Jhove property structure.
      */
-    public int getIndexOfChild (Object parent, Object child) 
+    public int getIndexOfChild (Object parent, Object child)
     {
         Property pProp = (Property) parent;
         PropertyArity arity = pProp.getArity ();
         // For Lists, Maps, and Sets we construct an Iterator.
         Iterator<?> iter = null;
-        if (arity == PropertyArity.SET || 
+        if (arity == PropertyArity.SET ||
                 arity == PropertyArity.LIST ||
                 arity == PropertyArity.MAP) {
             if (arity == PropertyArity.SET) {
@@ -159,7 +159,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         Rational[] rationalArray = null;
         Object[] objArray = null;
         int n = 0;
-   
+
         //if (child instanceof LeafHolder) {
         //    return ((LeafHolder) child).getPosition ();
         //}
@@ -183,7 +183,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         else {
             return 0;               // non-object array type
         }
-   
+
         for (int i = 0; i < n; i++) {
             Object elem = null;
             if (PropertyType.DATE == propType) {
@@ -204,12 +204,12 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         return 0;                   // somehow fell through
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     private void snarfRepInfo ()
     {
         // This node has two children, for the module and the RepInfo 
@@ -218,17 +218,17 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         if (module != null) {
             // Create a subnode for the module, which has three
             // leaf children.
-            DefaultMutableTreeNode moduleNode = 
+            DefaultMutableTreeNode moduleNode =
                     new DefaultMutableTreeNode ("Module");
-            moduleNode.add (new DefaultMutableTreeNode 
+            moduleNode.add (new DefaultMutableTreeNode
                 (module.getName (), false));
-            moduleNode.add (new DefaultMutableTreeNode 
+            moduleNode.add (new DefaultMutableTreeNode
                 ("Release: " + module.getRelease (), false));
             moduleNode.add (new DefaultMutableTreeNode
                 ("Date: " + _dateFmt.format (module.getDate ()), false));
             add (moduleNode);
         }
-        
+
         DefaultMutableTreeNode infoNode =
                 new DefaultMutableTreeNode ("RepInfo");
         infoNode.add (new DefaultMutableTreeNode
@@ -261,7 +261,8 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         String wfStr;
         switch (_info.getWellFormed ()) {
             case RepInfo.TRUE:
-                wfStr = "Well-Formed";                break;
+                wfStr = "Well-Formed";
+                break;
             case RepInfo.FALSE:
                 wfStr = "Not well-formed";
                 break;
@@ -274,15 +275,15 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 case RepInfo.TRUE:
                 wfStr += " and valid";
                 break;
-            
+
                 case RepInfo.FALSE:
                 wfStr += ", but not valid";
                 break;
-                
+
                 // case UNDETERMINED: add nothing
             }
         }
-        infoNode.add (new DefaultMutableTreeNode 
+        infoNode.add (new DefaultMutableTreeNode
                         ("Status: " + wfStr, false));
 
         // Report modules that said their signatures match
@@ -300,7 +301,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         // Compile a list of messages and offsets into a subtree
         List<Message> messageList = _info.getMessage ();
         if (messageList != null && messageList.size() > 0) {
-            DefaultMutableTreeNode msgNode = 
+            DefaultMutableTreeNode msgNode =
                 new DefaultMutableTreeNode  ("Messages");
             infoNode.add (msgNode);
             int i;
@@ -317,7 +318,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                     prefix = "Message: ";
                 }
                 DefaultMutableTreeNode mNode =
-                        new DefaultMutableTreeNode 
+                        new DefaultMutableTreeNode
                         (prefix + msg.getMessage ());
                 String subMessage = msg.getSubMessage ();
                 if (subMessage != null) {
@@ -341,17 +342,17 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 msgNode.add (mNode);
             }
         }
-        
+
         s = _info.getMimeType ();
         if (s != null) {
-            infoNode.add (new DefaultMutableTreeNode 
+            infoNode.add (new DefaultMutableTreeNode
                         ("MimeType: " + s, false));
         }
 
         // Compile a list of profile strings into a string list
         List<String> profileList = _info.getProfile ();
         if (profileList != null && profileList.size() > 0) {
-            DefaultMutableTreeNode profNode = 
+            DefaultMutableTreeNode profNode =
                 new DefaultMutableTreeNode ("Profiles");
             infoNode.add (profNode);
             int i;
@@ -373,10 +374,10 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 infoNode.add (propToNode (property));
             }
         }
-        
+
         List<Checksum> cksumList = _info.getChecksum();
         if (cksumList != null && !cksumList.isEmpty()) {
-            DefaultMutableTreeNode ckNode = 
+            DefaultMutableTreeNode ckNode =
                 new DefaultMutableTreeNode ("Checksums");
             infoNode.add (ckNode);
             //List cPropList = new LinkedList ();
@@ -390,7 +391,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                     ("Checksum: " + cksum.getValue (), false));
             }
         }
-        
+
         s = _info.getNote ();
         if (s != null) {
             infoNode.add (new DefaultMutableTreeNode
@@ -409,56 +410,56 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         if (typ == PropertyType.INTEGER) {
             int[] ar = (int []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Integer (ar[i])));
             }
         }
         else if (typ == PropertyType.LONG) {
             long[] ar = (long []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Long (ar[i])));
             }
         }
         else if (typ == PropertyType.BOOLEAN) {
             boolean[] ar = (boolean []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Boolean (ar[i])));
             }
         }
         else if (typ == PropertyType.CHARACTER) {
             char[] ar = (char []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Character (ar[i])));
             }
         }
         else if (typ == PropertyType.DOUBLE) {
             double[] ar = (double []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Double (ar[i])));
             }
         }
         else if (typ == PropertyType.FLOAT) {
             float[] ar = (float []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Float (ar[i])));
             }
         }
         else if (typ == PropertyType.SHORT) {
             short[] ar = (short []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Short (ar[i])));
             }
         }
         else if (typ == PropertyType.BYTE) {
             byte[] ar = (byte []) pVal;
             for (i = 0; i < ar.length; i++) {
-                node.add (new DefaultMutableTreeNode 
+                node.add (new DefaultMutableTreeNode
                     (new Byte (ar[i])));
             }
         }
@@ -562,7 +563,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 itemNode = (new DefaultMutableTreeNode (item, true));
             }
             node.add (itemNode);
-            
+
             // Add a subnode for the key
             itemNode.setAllowsChildren (true);
             itemNode.add (new DefaultMutableTreeNode ("Key: " + key, false));
@@ -621,7 +622,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         String[] use = aes.getUse ();
         if (use != null) {
-            DefaultMutableTreeNode u = 
+            DefaultMutableTreeNode u =
                     new DefaultMutableTreeNode ("Use", true);
             val.add (u);
             u.add (new DefaultMutableTreeNode ("UseType: " + use[0], false));
@@ -634,7 +635,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                  ("PrimaryIdentifier: " + s, true);
             val.add (pi);
             if (t != null) {
-                pi.add (new DefaultMutableTreeNode 
+                pi.add (new DefaultMutableTreeNode
                         ("IdentifierType: " + t));
             }
         }
@@ -643,7 +644,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         // this isn't supported yet.
         List<AESAudioMetadata.Face> facelist = aes.getFaceList ();
         if (!facelist.isEmpty ()) {
-            AESAudioMetadata.Face f = 
+            AESAudioMetadata.Face f =
                 facelist.get(0);
 
             DefaultMutableTreeNode face =
@@ -655,30 +656,29 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 addAESTimeRange (timeline, startTime, f.getDuration ());
             }
             face.add (timeline);
-            
+
             // For the present, assume just one face region
             AESAudioMetadata.FaceRegion facergn = f.getFaceRegion (0);
             DefaultMutableTreeNode region =
                     new DefaultMutableTreeNode ("Region", true);
             timeline = new DefaultMutableTreeNode ("TimeRange", true);
-            addAESTimeRange (timeline, 
+            addAESTimeRange (timeline,
                     facergn.getStartTime (), facergn.getDuration ());
             region.add (timeline);
             int nchan = aes.getNumChannels ();
             if (nchan != AESAudioMetadata.NULL) {
-                String[] locs = aes.getMapLocations ();
                 region.add (new DefaultMutableTreeNode
                         ("NumChannels: " + Integer.toString (nchan), false));
-                for (String loc : locs) {
+                for (int ch = 0; ch < nchan; ch++)  {
                     // write a stream element for each channel
                     DefaultMutableTreeNode stream =
                             new DefaultMutableTreeNode ("Stream", true);
                     region.add (stream);
-                    stream.add (new DefaultMutableTreeNode 
-                        ("ChannelAssignment: " + loc, false));
+                    stream.add (new DefaultMutableTreeNode
+                            ("ChannelNum: " + Integer.toString (ch), false));
                 }
             }
-            face.add (region);         
+            face.add (region);
             val.add (face);
         }
         // In the general case, a FormatList can contain multiple
@@ -687,7 +687,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         // iteration loop on formatList.
         List<AESAudioMetadata.FormatRegion> flist = aes.getFormatList ();
         if (!flist.isEmpty ()) {
-            AESAudioMetadata.FormatRegion rgn = 
+            AESAudioMetadata.FormatRegion rgn =
                 flist.get(0);
             int bitDepth = rgn.getBitDepth ();
             double sampleRate = rgn.getSampleRate ();
@@ -700,7 +700,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                     wordSize != AESAudioMetadata.NULL) {
                 DefaultMutableTreeNode formatList =
                         new DefaultMutableTreeNode ("FormatList", true);
-                DefaultMutableTreeNode formatRegion = 
+                DefaultMutableTreeNode formatRegion =
                         new DefaultMutableTreeNode ("FormatRegion", true);
                 if (bitDepth != AESAudioMetadata.NULL) {
                     formatRegion.add (new DefaultMutableTreeNode
@@ -715,7 +715,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                         ("WordSize: " + Integer.toString (bitDepth), false));
                 }
                 if (bitRed != null) {
-                    DefaultMutableTreeNode br = 
+                    DefaultMutableTreeNode br =
                             new DefaultMutableTreeNode ("BitrateReduction", true);
                     br.add (new DefaultMutableTreeNode
                         ("codecName: " + bitRed[0], false));
@@ -737,7 +737,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 val.add (formatList);
             }
         }
-        
+
         return val;
     }
 
@@ -745,103 +745,44 @@ public class RepTreeRoot extends DefaultMutableTreeNode
 				  AESAudioMetadata.TimeDesc start,
 				  AESAudioMetadata.TimeDesc duration)
     {
-        // Put the start time in
-        DefaultMutableTreeNode node =
-                new DefaultMutableTreeNode ("Start", true);
-        // Put in boilerplate to match the AES schema
-        node.add (new DefaultMutableTreeNode
-                ("FrameCount: 30", false));
-        node.add (new DefaultMutableTreeNode
-                ("TimeBase: 1000"));
-        node.add (new DefaultMutableTreeNode
-                ("VideoField: FIELD_1"));
-        node.add (new DefaultMutableTreeNode
-                ("CountingMode: NTSC_NON_DROP_FRAME", false));
-        node.add (new DefaultMutableTreeNode
-                ("Hours: " + start.getHours(), false));
-        node.add (new DefaultMutableTreeNode
-                ("Minutes: " + start.getMinutes(), false));
-        node.add (new DefaultMutableTreeNode
-                ("Seconds: " + start.getSeconds(), false));
-        node.add (new DefaultMutableTreeNode
-                ("Frames: " + start.getFrames(), false));
-
-        // Do samples a bit more elaborately than is really necessary,
-        // to maintain parallelism with the xml schema.
-        DefaultMutableTreeNode snode = new DefaultMutableTreeNode ("Samples",
-								   true);
-	double sr = start.getSampleRate ();
-	if (sr == 1.0) {
-	    sr = _sampleRate;
-	}
-	snode.add (new DefaultMutableTreeNode ("SampleRate: S" +
-					       Integer.toString ((int) sr),
-					       false));
-        snode.add (new DefaultMutableTreeNode ("NumberOfSamples: " +
-					       start.getSamples (), false ));
-        node.add (snode);
-
-	snode = new DefaultMutableTreeNode ("FilmFraming", true);
-	snode.add (new DefaultMutableTreeNode ("Framing: NOT_APPLICABLE",
-					       false));
-	snode.add (new DefaultMutableTreeNode ("Type: ntscFilmFramingType",
-					       false));
-	node.add (snode);
-        parent.add (node);
+        writeAESTimeRangePart(parent, "StartTime", start);
 
         // Duration is optional.  
         if (duration != null) {
-            node =  new DefaultMutableTreeNode ("Duration", true);
-            // Put in boilerplate to match the AES schema
-            node.add (new DefaultMutableTreeNode
-                    ("FrameCount: 30", false));
-            node.add (new DefaultMutableTreeNode
-                    ("TimeBase: 1000"));
-            node.add (new DefaultMutableTreeNode
-                    ("VideoField: FIELD_1"));
-            node.add (new DefaultMutableTreeNode
-                    ("CountingMode: NTSC_NON_DROP_FRAME", false));
-            node.add (new DefaultMutableTreeNode
-                    ("Hours: " + duration.getHours(), false));
-            node.add (new DefaultMutableTreeNode
-                    ("Minutes: " + duration.getMinutes(), false));
-            node.add (new DefaultMutableTreeNode
-                    ("Seconds: " + duration.getSeconds(), false));
-            node.add (new DefaultMutableTreeNode
-                    ("Frames: " + duration.getFrames(), false));
-            
-            // Do samples a bit more elaborately than is really necessary,
-            // to maintain parallelism with the xml schema.
-            snode = new DefaultMutableTreeNode ("Samples", true);
-	    sr = duration.getSampleRate ();
-	    if (sr == 1.0) {
-		sr = _sampleRate;
-	    }
-            snode.add (new DefaultMutableTreeNode ("SamplesRate S" +
-						   Integer.toString ((int) sr),
-						   false));
-            snode.add (new DefaultMutableTreeNode ("NumberOfSamples: " +
-						   duration.getSamples (),
-						   false ));
-            node.add (snode);
-
-            snode = new DefaultMutableTreeNode ("FilmFraming", true);
-            snode.add (new DefaultMutableTreeNode ("Framing: NOT_APPLICABLE",
-						   false));
-            snode.add (new DefaultMutableTreeNode ("Type: ntscFilmFramingType",
-						   false));
-	    node.add (snode);
-            parent.add (node);
+            writeAESTimeRangePart(parent, "Duration", duration);
         }
     }
+
+
+    private void writeAESTimeRangePart(DefaultMutableTreeNode parent,
+                                       String name, AESAudioMetadata.TimeDesc timeDesc) {
+        double sampleRate = timeDesc.getSampleRate ();
+        if (sampleRate == 1.0) {
+            sampleRate = _sampleRate;
+        }
+
+        DefaultMutableTreeNode node =
+                new DefaultMutableTreeNode (name, true);
+        node.add(new DefaultMutableTreeNode(
+                "Value: " + String.valueOf(timeDesc.getSamples()), false));
+        node.add(new DefaultMutableTreeNode(
+                "EditRate: " + sampleRate, false));
+        node.add(new DefaultMutableTreeNode(
+                "FactorNumerator: 1", false));
+        node.add(new DefaultMutableTreeNode(
+                "FactorDenominator: 1", false));
+
+        parent.add (node);
+    }
+
 
     /* Function for turning the textMD metadata into a subtree. */
     private DefaultMutableTreeNode textMDToNode (TextMDMetadata textMD)
     {
         DefaultMutableTreeNode val =
                  new DefaultMutableTreeNode ("TextMDMetadata", true);
-        
-        DefaultMutableTreeNode u = 
+
+        DefaultMutableTreeNode u =
             new DefaultMutableTreeNode ("Character_info", true);
         val.add (u);
 
@@ -877,7 +818,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         s = textMD.getMarkup_basis ();
         if (s != null) {
-            DefaultMutableTreeNode basis = 
+            DefaultMutableTreeNode basis =
                 new DefaultMutableTreeNode
                         ("Markup_basis: " + s, true);
             val.add (basis);
@@ -889,7 +830,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         s = textMD.getMarkup_language ();
         if (s != null) {
-            DefaultMutableTreeNode language = 
+            DefaultMutableTreeNode language =
                 new DefaultMutableTreeNode
                         ("Markup_language: " + s, true);
             val.add (language);
@@ -901,7 +842,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         return val;
     }
-   
+
     /* Function for turning the Niso metadata into a subtree. */
     private DefaultMutableTreeNode nisoToNode (NisoImageMetadata niso)
     {
@@ -917,13 +858,13 @@ public class RepTreeRoot extends DefaultMutableTreeNode
             val.add (new DefaultMutableTreeNode
             ("ByteOrder: " + s, false));
         }
-        
+
         int n = niso.getCompressionScheme ();
         if (n != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
                 ("CompressionScheme: " + integerRepresentation
                     (n, NisoImageMetadata.COMPRESSION_SCHEME,
-                    NisoImageMetadata.COMPRESSION_SCHEME_INDEX), 
+                    NisoImageMetadata.COMPRESSION_SCHEME_INDEX),
                     false));
         }
         if ((n = niso.getCompressionLevel ()) != NisoImageMetadata.NULL) {
@@ -957,7 +898,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         if ((n = niso.getYCbCrPositioning ()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
-                ("YCbCrPositioning: " + integerRepresentation 
+                ("YCbCrPositioning: " + integerRepresentation
                     (n, NisoImageMetadata.YCBCR_POSITIONING), false));
         }
         Rational [] rarray = niso.getYCbCrCoefficients ();
@@ -966,7 +907,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("YCbCrCoefficients", true));
             val.add (nod);
             for (int i = 0; i < rarray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (rarray[i].toString (), false));
             }
         }
@@ -976,13 +917,13 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("ReferenceBlackWhite", true));
             val.add (nod);
             for (int i = 0; i < rarray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (rarray[i].toString (), false));
             }
         }
         if ((n = niso.getSegmentType ()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
-                ("YSegmentType: " + integerRepresentation 
+                ("YSegmentType: " + integerRepresentation
                     (n, NisoImageMetadata.SEGMENT_TYPE), false));
         }
         long [] larray = niso.getStripOffsets ();
@@ -991,7 +932,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("StripOffsets", true));
             val.add (nod);
             for (int i = 0; i < larray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (Long.toString (larray[i]), false));
             }
         }
@@ -1005,7 +946,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("StripByteCounts", true));
             val.add (nod);
             for (int i = 0; i < larray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (Long.toString (larray[i]), false));
             }
         }
@@ -1022,7 +963,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("TileOffsets", true));
             val.add (nod);
             for (int i = 0; i < larray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (Long.toString (larray[i]), false));
             }
         }
@@ -1031,7 +972,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("TileByteCounts", true));
             val.add (nod);
             for (int i = 0; i < larray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (Long.toString (larray[i]), false));
             }
         }
@@ -1056,7 +997,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         if ((n = niso.getChecksumMethod ()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
                 ("ChecksumMethod: " + integerRepresentation (n,
-                        NisoImageMetadata.CHECKSUM_METHOD), 
+                        NisoImageMetadata.CHECKSUM_METHOD),
                         false));
         }
         if ((s = niso.getChecksumValue ()) != null) {
@@ -1065,14 +1006,14 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
         if ((n = niso.getOrientation ()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
-                ("Orientation: " + integerRepresentation (n, 
-                        NisoImageMetadata.ORIENTATION), 
+                ("Orientation: " + integerRepresentation (n,
+                        NisoImageMetadata.ORIENTATION),
                         false));
         }
         if ((n = niso.getDisplayOrientation ()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
                 ("DisplayOrientation: " + integerRepresentation(n,
-                        NisoImageMetadata.DISPLAY_ORIENTATION), 
+                        NisoImageMetadata.DISPLAY_ORIENTATION),
                         false));
         }
         if ((ln = niso.getXTargetedDisplayAR ()) != NisoImageMetadata.NULL) {
@@ -1190,10 +1131,10 @@ public class RepTreeRoot extends DefaultMutableTreeNode
             val.add (new DefaultMutableTreeNode
                 ("ExposureBias: " + r.toString(), false));
         }
-        
+
         double [] darray = niso.getSubjectDistance ();
         if (darray != null) {
-            DefaultMutableTreeNode nod = new DefaultMutableTreeNode 
+            DefaultMutableTreeNode nod = new DefaultMutableTreeNode
                         ("SubjectDistance", true);
             val.add (nod);
             for (int i = 0; i < darray.length; i++) {
@@ -1218,7 +1159,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 ("FocalLength: " + Double.toString (d), false));
         }
         if ((n = niso.getFlash ()) != NisoImageMetadata.NULL) {
-     	    // First bit (0 = Flash did not fire, 1 = Flash fired) 
+     	    // First bit (0 = Flash did not fire, 1 = Flash fired)
             val.add (new DefaultMutableTreeNode
                 ("Flash: " + integerRepresentation(n & 1,
                         NisoImageMetadata.FLASH_20), false));
@@ -1271,13 +1212,13 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         if ((n = niso.getSamplingFrequencyPlane()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
                 ("SamplingFrequencyPlane: " + integerRepresentation (n,
-                        NisoImageMetadata.SAMPLING_FREQUENCY_PLANE), 
+                        NisoImageMetadata.SAMPLING_FREQUENCY_PLANE),
                         false));
         }
         if ((n = niso.getSamplingFrequencyUnit()) != NisoImageMetadata.NULL) {
             val.add (new DefaultMutableTreeNode
                 ("SamplingFrequencyUnit: " + integerRepresentation (n,
-                        NisoImageMetadata.SAMPLING_FREQUENCY_UNIT), 
+                        NisoImageMetadata.SAMPLING_FREQUENCY_UNIT),
                         false));
         }
     Rational rat = niso.getXSamplingFrequency ();
@@ -1429,7 +1370,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
             val.add (new DefaultMutableTreeNode
                 ("TargetType: " + integerRepresentation (n,
                         NisoImageMetadata.TARGET_TYPE), false));
-        } 
+        }
         if ((s = niso.getTargetIDManufacturer ()) != null) {
             val.add (new DefaultMutableTreeNode
                 ("TargetIDManufacturer: " + s, false));
@@ -1484,7 +1425,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
                 new DefaultMutableTreeNode ("ProcessingActions", true);
             val.add (nod);
             for (int i=1; i<sarray.length; i++) {
-                nod.add (new DefaultMutableTreeNode 
+                nod.add (new DefaultMutableTreeNode
                         (sarray[i], false));
             }
         }
@@ -1507,7 +1448,7 @@ public class RepTreeRoot extends DefaultMutableTreeNode
         }
     }
 
-    private String integerRepresentation (int n, 
+    private String integerRepresentation (int n,
                         String [] labels,
                         int [] index)
     {
