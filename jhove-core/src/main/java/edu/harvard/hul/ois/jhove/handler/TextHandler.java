@@ -20,35 +20,12 @@
 
 package edu.harvard.hul.ois.jhove.handler;
 
-import java.text.NumberFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import edu.harvard.hul.ois.jhove.AESAudioMetadata;
-import edu.harvard.hul.ois.jhove.Agent;
-import edu.harvard.hul.ois.jhove.App;
-import edu.harvard.hul.ois.jhove.Checksum;
-import edu.harvard.hul.ois.jhove.Document;
-import edu.harvard.hul.ois.jhove.HandlerBase;
-import edu.harvard.hul.ois.jhove.Identifier;
-import edu.harvard.hul.ois.jhove.InternalSignature;
-import edu.harvard.hul.ois.jhove.Message;
 import edu.harvard.hul.ois.jhove.Module;
-import edu.harvard.hul.ois.jhove.NisoImageMetadata;
-import edu.harvard.hul.ois.jhove.OutputHandler;
-import edu.harvard.hul.ois.jhove.Property;
-import edu.harvard.hul.ois.jhove.PropertyArity;
-import edu.harvard.hul.ois.jhove.PropertyType;
-import edu.harvard.hul.ois.jhove.Rational;
-import edu.harvard.hul.ois.jhove.RepInfo;
-import edu.harvard.hul.ois.jhove.Signature;
-import edu.harvard.hul.ois.jhove.SignatureType;
-import edu.harvard.hul.ois.jhove.TextMDMetadata;
+import edu.harvard.hul.ois.jhove.*;
 import edu.harvard.hul.ois.jhove.messages.JhoveMessages;
+
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * OutputHandler for plain text output.
@@ -933,17 +910,23 @@ public class TextHandler extends HandlerBase {
 			if (startTime != null) {
 				writeAESTimeRange(margn3, startTime, f.getDuration());
 			}
+
+			// For the present, assume just one face region
+			AESAudioMetadata.FaceRegion facergn = f.getFaceRegion(0);
+			_writer.println(margn3 + "Region: ");
+			_writer.println(margn4 + "TimeRange: ");
+			writeAESTimeRange(margn4, facergn.getStartTime(), facergn.getDuration());
+
 			int nchan = aes.getNumChannels();
 			if (nchan != AESAudioMetadata.NULL) {
 				_writer.println(margn4 + "NumChannels: "
 						+ Integer.toString(nchan));
 			}
-			String[] locs = aes.getMapLocations();
+
 			for (int ch = 0; ch < nchan; ch++) {
 				// write a stream description for each channel
 				_writer.println(margn4 + "Stream:");
 				_writer.println(margn5 + "ChannelNum: " + Integer.toString(ch));
-				_writer.println(margn5 + "ChannelAssignment: " + locs[ch]);
 			}
 		}
 
@@ -995,59 +978,28 @@ public class TextHandler extends HandlerBase {
 	}
 
 	/* start must be non-null, but duration may be null */
-	private void writeAESTimeRange(String baseIndent,
-			AESAudioMetadata.TimeDesc start, AESAudioMetadata.TimeDesc duration) {
-		final String margn1 = baseIndent + " ";
-		final String margn2 = margn1 + " ";
-		final String margn3 = margn2 + " ";
-		_writer.println(margn1 + "StartTime:");
-		_writer.println(margn2 + "FrameCount: 30");
-		_writer.println(margn2 + "TimeBase: 1000");
-		_writer.println(margn2 + "VideoField: FIELD_1");
-		_writer.println(margn2 + "CountingMode: NTSC_NON_DROP_FRAME");
-		_writer.println(margn2 + "Hours: " + Long.toString(start.getHours()));
-		_writer.println(margn2 + "Minutes: "
-				+ Long.toString(start.getMinutes()));
-		_writer.println(margn2 + "Seconds: "
-				+ Long.toString(start.getSeconds()));
-		_writer.println(margn2 + "Frames: " + Long.toString(start.getFrames()));
-		_writer.println(margn2 + "Samples: ");
-		double sr = start.getSampleRate();
-		if (sr == 1.0) {
-			sr = _sampleRate;
-		}
-		_writer.println(margn3 + "SampleRate: S" + Integer.toString((int) sr));
-		_writer.println(margn3 + "NumberOfSamples: "
-				+ Long.toString(start.getSamples()));
-		_writer.println(margn2 + "FilmFraming: NOT_APPLICABLE");
-		_writer.println(margn3 + "Type: ntscFilmFramingType");
-
+	private void writeAESTimeRange(String baseIndent, AESAudioMetadata.TimeDesc start, AESAudioMetadata.TimeDesc duration) {
+		writeAESTimeRangePart(baseIndent, "StartTime", start);
 		if (duration != null) {
-			_writer.println(margn1 + "Duration:");
-			_writer.println(margn2 + "FrameCount: 30");
-			_writer.println(margn2 + "TimeBase: 1000");
-			_writer.println(margn2 + "VideoField: FIELD_1");
-			_writer.println(margn2 + "CountingMode: NTSC_NON_DROP_FRAME");
-			_writer.println(margn2 + "Hours: "
-					+ Long.toString(duration.getHours()));
-			_writer.println(margn2 + "Minutes: "
-					+ Long.toString(duration.getMinutes()));
-			_writer.println(margn2 + "Seconds: "
-					+ Long.toString(duration.getSeconds()));
-			_writer.println(margn2 + "Frames: "
-					+ Long.toString(duration.getFrames()));
-			_writer.println(margn2 + "Samples: ");
-			sr = duration.getSampleRate();
-			if (sr == 1.0) {
-				sr = _sampleRate;
-			}
-			_writer.println(margn3 + "SampleRate: S"
-					+ Integer.toString((int) sr));
-			_writer.println(margn3 + "NumberOfSamples: "
-					+ Long.toString(duration.getSamples()));
-			_writer.println(margn2 + "FilmFraming: NOT_APPLICABLE");
-			_writer.println(margn3 + "Type: ntscFilmFramingType");
+			writeAESTimeRangePart(baseIndent, "Duration", duration);
 		}
+	}
+
+	private void writeAESTimeRangePart(String baseIndent, String name, AESAudioMetadata.TimeDesc timeDesc) {
+		String margn1 = baseIndent + " ";
+		String margn2 = margn1 + " ";
+
+		_writer.println(margn1 + name + ": ");
+
+		double sampleRate = timeDesc.getSampleRate();
+		if (sampleRate == 1.0) {
+			sampleRate = _sampleRate;
+		}
+
+		_writer.println(margn2 + "Value: " + String.valueOf(timeDesc.getSamples()));
+		_writer.println(margn2 + "EditRate: " + Integer.toString((int) sampleRate));
+		_writer.println(margn2 + "FactorNumerator: 1");
+		_writer.println(margn2 + "FactorDenominator: 1");
 	}
 
 	/**
@@ -1055,11 +1007,10 @@ public class TextHandler extends HandlerBase {
 	 * The schema which is used may be 0.2 or 1.0, depending on the module
 	 * parameters.
 	 *
-	 * @param niso
-	 *            NISO image metadata
+	 * @param niso NISO image metadata
 	 */
 	protected void showNisoImageMetadata(NisoImageMetadata niso, String margin,
-			boolean rawOutput) {
+										 boolean rawOutput) {
 		if ("0.2".equals(_je.getMixVersion())) {
 			showNisoImageMetadata02(niso, margin, rawOutput);
 		} else {

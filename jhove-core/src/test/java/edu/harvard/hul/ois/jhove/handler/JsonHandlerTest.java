@@ -404,12 +404,8 @@ public class JsonHandlerTest {
         
 		String result = outString.toString();
 		LOGGER.info(FIND + result);
-		final String expected = "{\"aes:schemaVersion\":\"1.02b\",\"aes:format\":\"audio/wav\"," +
-				"\"aes:face\":{\"aes:timeline\":{\"tcf:startTime\":{\"tcf:frameCount\":30,\"tcf:timeBase\":1000," +
-				"\"tcf:videoField\":\"FIELD_1\",\"tcf:countingMode\":\"NTSC_NON_DROP_FRAME\",\"tcf:hours\":0," +
-				"\"tcf:minutes\":0,\"tcf:seconds\":0,\"tcf:frames\":0," +
-				"\"tcf:samples\":{\"tcf:sampleRate\":\"S44100\",\"tcf:numberOfSamples\":0}," +
-				"\"tcf:filmFraming\":{\"tcf:framing\":\"NOT_APPLICABLE\",\"tcf:framingType\":\"tcf:ntscFilmFramingType\"}}}," +
+		final String expected = "{\"aes:schemaVersion\":\"1.0.0\",\"aes:format\":\"audio/wav\"," +
+				"\"aes:face\":{\"aes:timeline\":{\"aes:startTime\":{\"aes:editRate\":\"44100\",\"aes:factorNumerator\":\"1\",\"aes:factorDenominator\":\"1\"}}," +
 				"\"aes:streams\":[]}}";
 
 	    assertEquals(expected, result);

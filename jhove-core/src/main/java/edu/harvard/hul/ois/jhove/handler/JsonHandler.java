@@ -19,41 +19,12 @@
 
 package edu.harvard.hul.ois.jhove.handler;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
-
-import edu.harvard.hul.ois.jhove.AESAudioMetadata;
-import edu.harvard.hul.ois.jhove.Agent;
-import edu.harvard.hul.ois.jhove.App;
-import edu.harvard.hul.ois.jhove.Checksum;
-import edu.harvard.hul.ois.jhove.Document;
-import edu.harvard.hul.ois.jhove.HandlerBase;
-import edu.harvard.hul.ois.jhove.Identifier;
-import edu.harvard.hul.ois.jhove.InternalSignature;
-import edu.harvard.hul.ois.jhove.Message;
 import edu.harvard.hul.ois.jhove.Module;
-import edu.harvard.hul.ois.jhove.NisoImageMetadata;
-import edu.harvard.hul.ois.jhove.OutputHandler;
-import edu.harvard.hul.ois.jhove.Property;
-import edu.harvard.hul.ois.jhove.PropertyArity;
-import edu.harvard.hul.ois.jhove.PropertyType;
-import edu.harvard.hul.ois.jhove.Rational;
-import edu.harvard.hul.ois.jhove.RepInfo;
-import edu.harvard.hul.ois.jhove.Signature;
-import edu.harvard.hul.ois.jhove.SignatureType;
-import edu.harvard.hul.ois.jhove.TextMDMetadata;
+import edu.harvard.hul.ois.jhove.*;
 import edu.harvard.hul.ois.jhove.messages.JhoveMessages;
+
+import javax.json.*;
+import java.util.*;
 
 /**
  * OutputHandler for JSON output.
@@ -92,9 +63,6 @@ public class JsonHandler extends HandlerBase {
 
 	/** mix:grayResponseUnit. */
 	private static final String MIX_GRAY_RESPONSE_UNIT = "mix:grayResponseUnit";
-
-	/** Handler NTSC_NON_DROP_FRAME. */
-	private static final String NTSC_NON_DROP_FRAME = "NTSC_NON_DROP_FRAME";
 
 	/** Handler note. */
 	private static final String NOTE = "";
@@ -2023,61 +1991,22 @@ public class JsonHandler extends HandlerBase {
 
 		JsonObjectBuilder timerangeBuilder = Json.createObjectBuilder();
 		timerangeBuilder
-				.add("tcf:startTime",
+				.add("aes:startTime",
 						Json.createObjectBuilder()
-								.add("tcf:frameCount", 30)
-								.add("tcf:timeBase", 1000)
-								.add("tcf:videoField", "FIELD_1")
-								.add("tcf:countingMode", NTSC_NON_DROP_FRAME)
-								.add("tcf:hours", start.getHours())
-								.add("tcf:minutes", start.getMinutes())
-								.add("tcf:seconds", start.getSeconds())
-								.add("tcf:frames", start.getFrames())
-								.add("tcf:samples",
-										Json.createObjectBuilder()
-												.add("tcf:sampleRate",
-														"S"
-																+ Integer
-																		.toString((int) sr))
-												.add("tcf:numberOfSamples",
-														start.getSamples()))
-								.add("tcf:filmFraming",
-										Json.createObjectBuilder()
-												.add("tcf:framing",
-														"NOT_APPLICABLE")
-												.add("tcf:framingType",
-														"tcf:ntscFilmFramingType")));
+								.add("aes:editRate", Integer.toString((int) sr))
+								.add("aes:factorNumerator", "1")
+								.add("aes:factorDenominator", "1"));
 		if (duration != null) {
 			sr = duration.getSampleRate();
 			if (sr == 1.0) {
 				sr = _sampleRate;
 			}
 			timerangeBuilder
-					.add("tcf:duration",
+					.add("aes:duration",
 							Json.createObjectBuilder()
-									.add("tcf:frameCount", 30)
-									.add("tcf:timeBase", 1000)
-									.add("tcf:videoField", "FIELD_1")
-									.add("tcf:countingMode",
-											NTSC_NON_DROP_FRAME)
-									.add("tcf:hours", duration.getHours())
-									.add("tcf:minutes", duration.getMinutes())
-									.add("tcf:seconds", duration.getSeconds())
-									.add("tcf:frames", duration.getFrames())
-									.add("tcf:samples",
-											Json.createObjectBuilder()
-													.add("tcf:sampleRate",
-															"S"
-																	+ Integer
-																			.toString((int) sr))
-													.add("tcf:numberOfSamples",
-															duration.getSamples()))
-									.add("tcf:filmFraming",
-											Json.createObjectBuilder()
-													.add("tcf:framing",
-															"NOT_APPLICABLE")
-													.add("tcf:framingType",
-															"tcf:ntscFilmFramingType")));
+									.add("aes:editRate", Integer.toString((int) sr))
+									.add("aes:factorNumerator", "1")
+									.add("aes:factorDenominator", "1"));
 		}
 		return timerangeBuilder;
 	}
